@@ -1,0 +1,79 @@
+name: release-please
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # 运行在 ubuntu-latest
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      # 发布的检验
+      - uses: google-github-actions/release-please-action@v3
+        name: 发布检验 #release-please
+        id: release
+        with:
+          release-type: node
+          package-name: '@iskl/ts-lib-template'
+      # Checkout 仓库
+      - uses: actions/checkout@v2
+        name: Checkout 仓库 # Checkout
+        if: ${{ steps.release.outputs.release_created }}
+      # Install Node.js
+      - uses: actions/setup-node@v1
+        name: 安装nodejs
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+      # 安装pnpm
+      - uses: pnpm/action-setup@v2
+        if: ${{ steps.release.outputs.release_created }}
+        name: 安装pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+      # 获取pnpm的缓存路径
+      - name: 获取pnpm的缓存路径 # Get pnpm store directory
+        if: ${{ steps.release.outputs.release_created }}
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      # 设置缓存
+      - uses: actions/cache@v3
+        if: ${{ steps.release.outputs.release_created }}
+        name: 设置pnpm缓存 # Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      # 安装依赖，编译代码
+      - name: 安装依赖，编译代码 # Install dependencies and complile
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          pnpm install
+          npm run test
+          npm run cov:check
+          npm run doc:html
+      # 发布文档到gh-pages分支
+      - name: 发布文档到gh-pages
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npx gh-pages -m "[ci skip] Updates" -d build/docs -u "github-actions-bot <support+actions@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 发布
+      - name: 发布到npm # release
+        if: ${{ steps.release.outputs.release_created }}
+        run: npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
