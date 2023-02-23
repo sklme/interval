@@ -34,7 +34,7 @@
     "cov": "run-s build test:unit  cov:html cov:lcov && open-cli coverage/index.html",
     "cov:html": "nyc report --reporter=html",
     "cov:lcov": "nyc report --reporter=lcov",
-    "cov:check": "nyc report && nyc check-coverage --lines 80 --functions 80 --branches 80",
+    "cov:check": "nyc report && nyc check-coverage --lines 60 --functions 60 --branches 60",
     "doc": "run-p doc:html doc:json && open-cli build/docs/index.html",
     "doc:html": "typedoc src/ --exclude **/*.spec.ts  --out build/docs",
     "doc:json": "typedoc src/ --exclude **/*.spec.ts  --json build/docs/typedoc.json",

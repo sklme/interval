@@ -186,4 +186,7 @@ test('测试所有回调', async (t) => {
 
   interval.stop();
   t.is(onStop.callCount, 1);
+
+  interval.start();
+  t.is(onStart.callCount, 2);
 });
