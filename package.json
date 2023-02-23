@@ -1,6 +1,6 @@
 {
   "name": "@iskl/interval",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "更加实用的interval，可以当做长链接使用。",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
