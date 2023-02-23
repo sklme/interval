@@ -19,7 +19,7 @@ jobs:
         id: release
         with:
           release-type: node
-          package-name: '@iskl/ts-lib-template'
+          package-name: '@iskl/interval'
       # Checkout 仓库
       - uses: actions/checkout@v2
         name: Checkout 仓库 # Checkout
