@@ -40,9 +40,6 @@ export interface intervalOptions {
   onError?(error: Error, options: EventOptions): void;
 }
 
-/**
- * 最厉害的类
- */
 export class Interval {
   // 计时器
   #timeoutTimer: number | NodeJS.Timeout | null = null;
