@@ -1,7 +1,11 @@
 ## 更加实用的 interval
 
 ```ts
-const interval = new Interval(f, {
+function pollingFn() {
+  console.log('执行了polling函数');
+}
+
+const interval = new Interval(pollingFn, {
   debounceInterval: 2000,
   onStart: () => {
     console.log('onStart');
@@ -13,3 +17,5 @@ const interval = new Interval(f, {
 
 interval.start();
 ```
+
+接口参考：https://sklme.github.io/interval/classes/Interval.html
